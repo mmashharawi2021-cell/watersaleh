@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "geoai-f0601"
+  },
+  "targets": {
+    "geoai-f0601": {
+      "hosting": {
+        "water-app": [
+          "water-dashboard-ps"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (getUserData().role == 'Admin' || getUserData().role == 'Super Admin');
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && getUserData().role == 'Super Admin';
+    }
+
+    // Reports collection
+    match /reports/{reportId} {
+      allow read, create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+    
+    // Fuel Entries collection
+    match /fuelEntries/{entryId} {
+      allow read, create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+    
+    // Logs collection
+    match /logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if isSuperAdmin();
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isSuperAdmin() || (request.auth.uid == userId);
+      allow delete: if isSuperAdmin();
+    }
+    
+    // Settings collection
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+  }
+}
