@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { db } from '../firebase';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { 
   LayoutDashboard, 
   FileText, 
